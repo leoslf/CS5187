@@ -10,8 +10,8 @@ class CustomEarlyStopping(EarlyStopping):
         super().__init__(**kwargs)
 
     def on_epoch_end(self, epoch, logs):
-        current = logs.get(self.monitor)
-        if not self.target or self.monitor_op(self.best, self.target):
+        current = self.get_monitor_value(logs)
+        if not self.target or self.monitor_op(self.target, self.best):
             super().on_epoch_end(epoch, logs)
 
 class BaseModel:
@@ -71,7 +71,7 @@ class BaseModel:
             filename = self.weight_filename
 
         if os.path.exists(filename):
-            self.model.load_weights(filename, by_name=True)
+            self.model.load_weights(filename, by_name=True, skip_mismatch=True)
 
     def save_weights(self):
         self.model.save_weights(self.weight_filename)
@@ -82,7 +82,7 @@ class BaseModel:
 
     @property
     def earlystopping_target(self):
-        return 0.9999
+        return 0.9
 
     @property
     def earlystopping(self):

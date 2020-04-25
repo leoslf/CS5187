@@ -23,9 +23,12 @@ from sklearn.exceptions import DataConversionWarning
 from sklearn.metrics import multilabel_confusion_matrix
 from sklearn.metrics import classification_report
 
+from sklearn.svm import SVC
+
 from pprint import pprint
 
 from streetnumber.model import *
+from streetnumber.nn_classifier import *
 from streetnumber.feature_extractor import *
 from streetnumber.utils import *
 
@@ -46,7 +49,7 @@ if __name__ == "__main__":
     train_onehot, test_onehot = list(map(reshape_dataset, load_dataset(dataset_filenames)))
     train, test = list(map(partial(reshape_dataset, one_hot = False), load_dataset(dataset_filenames)))
 
-    model = FeatureExtractor()
+    model = NNClassifier()
     history = model.fit(*train_onehot)
     with open("history.pickle", "wb") as f:
         pickle.dump(history, f)
@@ -62,6 +65,10 @@ if __name__ == "__main__":
     report = classification_report(np.argmax(test_Y, axis=-1), predict_Y) # , target_names=list(map(str, range(10))))
     with open("test_classification_report.txt", "w") as f:
         f.write(report)
+
+
+
+
 
     
 
