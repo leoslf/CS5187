@@ -139,3 +139,7 @@ logs/
 *.bak
 *.txt
 *.pickle
+
+*.out
+*.err
+*.log

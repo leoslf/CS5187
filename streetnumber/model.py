@@ -11,7 +11,7 @@ class CustomEarlyStopping(EarlyStopping):
 
     def on_epoch_end(self, epoch, logs):
         current = logs.get(self.monitor)
-        if self.target and self.monitor_op(self.target, current):
+        if not self.target or self.monitor_op(self.best, self.target):
             super().on_epoch_end(epoch, logs)
 
 class BaseModel:
