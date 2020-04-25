@@ -67,20 +67,20 @@ def reshape_dataset(dataset, one_hot = True):
     return np.array(X), np.array(OneHotEncoder(sparse=False).fit_transform(Y) if one_hot else Y)
 
 
-def TP(y_true, y_pred):
-    return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-
-# Metrics
-def recall(y_true, y_pred):
-    positives = K.sum(K.clip(y_true, 0, 1))
-    return TP(y_true, y_pred) / (positives + K.epsilon())
-
-def precision(y_true, y_pred):
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    return TP(y_true, y_pred) / (predicted_positives + K.epsilon())
-
-def F1(y_true, y_pred):
-    p = precision(y_true, y_pred)
-    r = recall(y_true, y_pred)
-    return 2 * (p * r) / (p + r + K.epsilon())
+# def TP(y_true, y_pred):
+#     return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+# 
+# # Metrics
+# def recall(y_true, y_pred):
+#     positives = K.sum(K.clip(y_true, 0, 1))
+#     return TP(y_true, y_pred) / (positives + K.epsilon())
+# 
+# def precision(y_true, y_pred):
+#     predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+#     return TP(y_true, y_pred) / (predicted_positives + K.epsilon())
+# 
+# def F1(y_true, y_pred):
+#     p = precision(y_true, y_pred)
+#     r = recall(y_true, y_pred)
+#     return 2 * (p * r) / (p + r + K.epsilon())
 

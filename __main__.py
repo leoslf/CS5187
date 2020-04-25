@@ -21,6 +21,7 @@ import pickle
 
 from sklearn.exceptions import DataConversionWarning
 from sklearn.metrics import multilabel_confusion_matrix
+from sklearn.metrics import classification_report
 
 from pprint import pprint
 
@@ -46,15 +47,22 @@ if __name__ == "__main__":
     train, test = list(map(partial(reshape_dataset, one_hot = False), load_dataset(dataset_filenames)))
 
     model = FeatureExtractor()
-    # history = model.fit(*train_onehot)
-    # with open("history.pickle", "wb") as f:
-    #     pickle.dump(history, f)
+    history = model.fit(*train_onehot)
+    with open("history.pickle", "wb") as f:
+        pickle.dump(history, f)
+
+    test_X, test_Y = test_onehot
 
     evaluation = model.evaluate(*test_onehot)
     with open("evaluation.pickle", "wb") as f:
         pickle.dump(evaluation, f)
 
-    print (evaluation)
+    # print (evaluation)
+    predict_Y = model.predict(test_X)
+    report = classification_report(np.argmax(test_Y, axis=-1), predict_Y) # , target_names=list(map(str, range(10))))
+    with open("test_classification_report.txt", "w") as f:
+        f.write(report)
+
     
 
 

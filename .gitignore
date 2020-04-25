@@ -132,3 +132,10 @@ dmypy.json
 *.mat
 train/*
 test/*
+
+logs/
+
+*.h5
+*.bak
+*.txt
+*.pickle

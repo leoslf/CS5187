@@ -218,7 +218,7 @@ class FeatureExtractor(BaseModel):
         # loss3_classifier = Dense(1000, name='loss3_classifier', kernel_regularizer=l2(0.0002))(pool5_drop_7x7)
         # loss3_classifier_act = Activation('softmax', name='prob')(loss3_classifier)
 
-        return Model(inputs=inputs, outputs=loss1_classifier_act) # , loss2_classifier_act, loss3_classifier_act])
+        return Model(inputs=inputs, outputs=loss1_classifier_act, name = self.name) # , loss2_classifier_act, loss3_classifier_act])
         
     @property
     def loss(self):
@@ -226,5 +226,6 @@ class FeatureExtractor(BaseModel):
     
     @property
     def optimizer(self):
-        return SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True, clipvalue=1.0)
+        # return SGD(lr=0.08, momentum=0.9, nesterov=True, clipvalue=1.0) # decay=1e-6, 
+        return Adadelta()
 

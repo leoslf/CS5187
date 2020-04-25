@@ -3,6 +3,17 @@ import os
 from datetime import datetime
 from streetnumber.utils import *
 
+class CustomEarlyStopping(EarlyStopping):
+
+    def __init__(self, target=None, **kwargs):
+        self.target = target
+        super().__init__(**kwargs)
+
+    def on_epoch_end(self, epoch, logs):
+        current = logs.get(self.monitor)
+        if self.target and self.monitor_op(self.target, current):
+            super().on_epoch_end(epoch, logs)
+
 class BaseModel:
     def __init__(self,
                  input_shape = (9, ),
@@ -49,7 +60,7 @@ class BaseModel:
 
     @property
     def loss(self):
-        return "mean_squared_error"
+        return "categorical_crossentropy"
 
     @property
     def weight_filename(self):
@@ -67,19 +78,25 @@ class BaseModel:
 
     @property
     def metrics(self):
-        return ["accuracy", recall, precision, F1, "categorical_crossentropy"]
+        return ["accuracy", "categorical_crossentropy"]
+
+    @property
+    def earlystopping_target(self):
+        return 0.9999
 
     @property
     def earlystopping(self):
-       return EarlyStopping(monitor="val_loss", # use validation accuracy for stopping
-                            min_delta = 0.0001,
-                            patience = 50, 
-                            verbose = self.verbose,
-                            mode="auto")
+       return CustomEarlyStopping(monitor="val_accuracy", # use validation accuracy for stopping
+                                  min_delta = 0.0001,
+                                  patience = 50, 
+                                  verbose = self.verbose,
+                                  mode="auto",
+                                  restore_best_weights=True,
+                                  target = self.earlystopping_target)
 
     @property
     def modelcheckpoint(self):
-        return ModelCheckpoint(os.path.join(self.logdir, "epoch{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5"), monitor="val_loss", save_weights_only=True, save_best_only=True, period=3)
+        return ModelCheckpoint(os.path.join(self.logdir, "epoch{epoch:03d}-accuracy{accuracy:.3f}-val_accuracy{val_accuracy:.3f}.h5"), monitor="val_accuracy", save_weights_only=True, save_best_only=True, period=3)
 
 
     @property
@@ -88,6 +105,7 @@ class BaseModel:
             self.earlystopping,
             self.modelcheckpoint,
             TensorBoard(log_dir=self.logdir),
+            TerminateOnNaN(),
         ]
 
     @property
@@ -116,5 +134,6 @@ class BaseModel:
                                    use_multiprocessing = self.use_multiprocessing)
 
     def predict(self, X, *argv, **kwargs):
-        return self.model.predict_class(X, *argv, **kwargs)
+        y_pred = self.model.predict(X, *argv, **kwargs)
+        return np.argmax(y_pred, axis=-1)
 
