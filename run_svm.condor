@@ -5,7 +5,7 @@ notification	= Never
 notify_user	= 
 getenv		= True
 
-name		= __main__
+name		= run_svm
 # main 
 executable 	= /usr/bin/python3 
 python_argv 	= 
@@ -18,6 +18,5 @@ input      =
 output     = $(name).out
 error      = $(name).err
 log        = $(name).log
-request_gpus = 1
 
 queue

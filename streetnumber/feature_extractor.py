@@ -8,3 +8,6 @@ class FeatureExtractor(NNClassifier):
     def fit(self, *argv):
         raise NotImplementedError("Read only model")
 
+    def predict(self, *argv, argmax=False, **kwargs):
+        return super().predict(*argv, argmax=argmax, **kwargs)
+

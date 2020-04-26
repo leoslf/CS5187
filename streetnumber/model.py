@@ -133,7 +133,9 @@ class BaseModel:
                                    verbose = self.verbose,
                                    use_multiprocessing = self.use_multiprocessing)
 
-    def predict(self, X, *argv, **kwargs):
+    def predict(self, X, argmax=True, *argv, **kwargs):
         y_pred = self.model.predict(X, *argv, **kwargs)
-        return np.argmax(y_pred, axis=-1)
+        if argmax:
+            return np.argmax(y_pred, axis=-1)
+        return y_pred
 

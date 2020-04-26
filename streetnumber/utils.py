@@ -18,6 +18,7 @@ import scipy
 import scipy.io
 
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.metrics import confusion_matrix, classification_report, log_loss, make_scorer
 
 import warnings  
 with warnings.catch_warnings():  
@@ -39,6 +40,8 @@ with warnings.catch_warnings():
 
 
 logger = logging.getLogger(__name__)
+LogLoss = make_scorer(log_loss, greater_is_better=False, needs_proba=True)
+
 
 def vectorize(f):
     @functools.wraps(f)
@@ -65,6 +68,19 @@ def reshape_dataset(dataset, one_hot = True):
     X, Y = dataset["X"], dataset["y"]
     X = X.transpose([3, 0, 1, 2])
     return np.array(X), np.array(OneHotEncoder(sparse=False).fit_transform(Y) if one_hot else Y)
+
+def reporting(name, y_true, y_pred, labels = None):
+    report = classification_report(y_true, y_pred, digits=8, target_names=labels)
+    report_filename = "%s_test_classification_report.txt" % name
+    with open(report_filename, "w") as f:
+        f.write(report)
+    logger.info("Saved \"%s\"", report_filename)
+
+    confusion = confusion_matrix(y_true, y_pred)
+    confusion_filename = "%s_test_confusion_matrix.txt" % name
+    np.savetxt(confusion_filename, confusion, delimiter=",")
+    logger.info("Saved \"%s\"", confusion_filename)
+
 
 
 # def TP(y_true, y_pred):
