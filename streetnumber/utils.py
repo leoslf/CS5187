@@ -34,6 +34,7 @@ with warnings.catch_warnings():
     from keras.objectives import *
     from keras.callbacks import * 
     from keras.losses import * 
+    from keras.preprocessing.image import * 
 
     from keras import backend as K
     from keras.utils import generic_utils
@@ -59,7 +60,7 @@ def log(f):
 
 def compose(*functions):
     r""" Function Composition: :math:`(f_1 \circ \cdots \circ f_n)(x)` """
-    return reduce(lambda f, g: lambda x: g(f(x)), functions, lambda x: x)
+    return reduce(lambda f, g: lambda x: f(g(x)), functions, lambda x: x)
 
 def load_dataset(filenames):
     return list(map(scipy.io.loadmat, filenames))
@@ -82,6 +83,28 @@ def reporting(name, y_true, y_pred, labels = None):
     logger.info("Saved \"%s\"", confusion_filename)
 
 
+def smooth_L1(sigma):
+    def smooth_L1_implementation(x):
+        x_abs = K.abs(x)
+        abs_lt_1 = K.stop_gradient(K.less(x_abs, 1. / sigma ** 2))
+        return abs_lt_1 * ((0.5 * sigma ** 2) * K.square(x)) + (1 - abs_lt_1) * (x_abs - (0.5 / sigma ** 2))
+    return smooth_L1_implementation
+
+def binary_crossentropy(p_true, p_pred):
+    return - K.log(p_true * p_pred + (1 - p_true) * (1 - p_pred))
+
+def binary_classifier_loss_regression(inside_weights, outside_weights, sigma, dim = [1]):
+    smooth_l1 = smooth_L1(sigma)
+    def loss(bbox_gt, bbox_pred):
+        bbox_difference = bbox_pred - bbox_gt
+        inside_difference = inside_weights * bbox_difference
+        inside_difference_abs = K.abs(inside_difference)
+        inside_loss = smooth_l1(inside_difference)
+        outside_loss = outside_weights * inside_loss
+
+        return K.mean(K.sum(outside_loss, axis = dim))
+
+    return loss
 
 # def TP(y_true, y_pred):
 #     return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))

@@ -61,27 +61,27 @@ if __name__ == "__main__":
     _, test_Y = test
 
     evaluation = model.evaluate(*test_onehot)
-    with open("evaluation.pickle", "wb") as f:
-        pickle.dump(evaluation, f)
-    logger.info("Saved \"evaluation.pickle\"")
+    # with open("evaluation.pickle", "wb") as f:
+    #     pickle.dump(evaluation, f)
+    # logger.info("Saved \"evaluation.pickle\"")
 
-    # print (evaluation)
-    predict_Y = model.predict(test_X)
-    reporting("nn", np.argmax(test_Y_onehot, axis=-1), predict_Y)
+    # # print (evaluation)
+    # predict_Y = model.predict(test_X)
+    # reporting("nn", np.argmax(test_Y_onehot, axis=-1), predict_Y)
 
-    if argv.preprocess_svm_dataset:
-        # Feature Extractor
-        feature_extractor = FeatureExtractor()
-        # Feature vector Representation
-        train_embeddings = feature_extractor.predict(train_X)
-        test_embeddings = feature_extractor.predict(test_X)
+    # if argv.preprocess_svm_dataset:
+    #     # Feature Extractor
+    #     feature_extractor = FeatureExtractor()
+    #     # Feature vector Representation
+    #     train_embeddings = feature_extractor.predict(train_X)
+    #     test_embeddings = feature_extractor.predict(test_X)
 
-        svm_train = (train_embeddings, train_Y)
-        svm_test = (test_embeddings, test_Y)
+    #     svm_train = (train_embeddings, train_Y)
+    #     svm_test = (test_embeddings, test_Y)
 
-        with open("svm_train.pickle", "wb") as f:
-            pickle.dump(svm_train, f)
+    #     with open("svm_train.pickle", "wb") as f:
+    #         pickle.dump(svm_train, f)
 
-        with open("svm_test.pickle", "wb") as f:
-            pickle.dump(svm_test, f)
+    #     with open("svm_test.pickle", "wb") as f:
+    #         pickle.dump(svm_test, f)
 

@@ -43,7 +43,7 @@ if __name__ == "__main__":
             clf = pickle.load(f)
     else:
         # SVM
-        clf = GridSearchCV(SVC(probability=True), param_grid, scoring = LogLoss, verbose=10, n_jobs=-1) # categorical_crossentropy
+        clf = GridSearchCV(SVC(probability=True), param_grid, scoring = LogLoss, verbose=10, n_jobs=None) # categorical_crossentropy
         logger.info("training SVC")
         clf.fit(train_embeddings, train_Y % 10)
         logger.info("finished training SVC")

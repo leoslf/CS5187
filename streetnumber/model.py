@@ -104,7 +104,7 @@ class BaseModel:
         return [
             self.earlystopping,
             self.modelcheckpoint,
-            TensorBoard(log_dir=self.logdir),
+            TensorBoard(log_dir=self.logdir, write_graph=True),
             TerminateOnNaN(),
         ]
 

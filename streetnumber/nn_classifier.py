@@ -52,7 +52,7 @@ class LRN(Layer):
 class NNClassifier(BaseModel):
     """ Scaled-Down GoogLeNet """
     def __init__(self, **kwargs):
-        super().__init__(input_shape = (32, 32, 3), output_shape = (2048, ), **kwargs)
+        super().__init__(input_shape = (32, 32, 3), output_shape = (10, ), **kwargs)
 
     def prepare_model(self):
         inputs = Input(shape = self.input_shape)
@@ -121,7 +121,7 @@ class NNClassifier(BaseModel):
         loss1_fc3 = Dense(256, activation="relu", name="loss1_fc3", kernel_regularizer=l2(0.0002))(loss1_fc2)
         loss1_embeddings = Dense(128, activation="relu", name="embeddings", kernel_regularizer=l2(0.0002))(loss1_fc3)
         loss1_drop_fc = Dropout(rate=0.4)(loss1_embeddings)
-        loss1_classifier = Dense(10, name='loss1_classifier', kernel_regularizer=l2(0.0002))(loss1_drop_fc)
+        loss1_classifier = Dense(self.output_shape[0], name='loss1_classifier', kernel_regularizer=l2(0.0002))(loss1_drop_fc)
         loss1_classifier_act = Activation('softmax')(loss1_classifier)
 
         # pool5_7x7 = AveragePooling2D(pool_size=(7,7), strides=(1,1), name='pool5_7x7_s2')(inception_5b_output)
