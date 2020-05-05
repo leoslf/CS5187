@@ -60,11 +60,28 @@ if __name__ == "__main__":
     test_X, test_Y_onehot = test_onehot
     _, test_Y = test
 
-    evaluation = model.evaluate(*test_onehot)
+    # evaluation = model.evaluate(*test_onehot)
     # with open("evaluation.pickle", "wb") as f:
     #     pickle.dump(evaluation, f)
     # logger.info("Saved \"evaluation.pickle\"")
 
+    predict_train_Y = model.predict(train_X, argmax=False)
+    np.savetxt("nn_predict_train_Y.txt", predict_train_Y)
+    np.savetxt("nn_train_Y.txt", train_Y)
+
+    misclassified_index = np.argmax(predict_train_Y, axis = -1) != np.argmax(train_onehot[1], axis = -1)
+    np.savetxt("misclassified_index_nn.txt", misclassified_index)
+
+    print ("misclassified: %d / %d" % (np.count_nonzero(misclassified_index), len(train_Y)))
+
+    montage = image_montage(train_X[misclassified_index], imsize = (32, 32, 3), maxw=100)
+    import imageio
+    imageio.imwrite("montage_nn.png", montage)
+
+
+    predict_Y = model.predict(test_X, argmax=False)
+    np.savetxt("nn_predict_Y.txt", predict_Y)
+    np.savetxt("nn_test_Y.txt", test_Y_onehot)
     # # print (evaluation)
     # predict_Y = model.predict(test_X)
     # reporting("nn", np.argmax(test_Y_onehot, axis=-1), predict_Y)

@@ -106,6 +106,34 @@ def binary_classifier_loss_regression(inside_weights, outside_weights, sigma, di
 
     return loss
 
+# function to make an image montage
+def image_montage(X, imsize=None, maxw=10):
+    """X can be a list of images, or a matrix of vectorized images.
+      Specify imsize when X is a matrix."""
+    tmp = []
+    numimgs = len(X)
+    
+    # create a list of images (reshape if necessary)
+    for i in range(0, numimgs):
+        if imsize != None:
+            tmp.append(X[i].reshape(imsize))
+        else:
+            tmp.append(X[i])
+    
+    # add blanks
+    if (numimgs > maxw) and (np.mod(numimgs, maxw) > 0):
+        leftover = maxw - np.mod(numimgs, maxw)
+        # meanimg = 0.5*(X[0].max()+X[0].min())
+        for i in range(0,leftover):
+            tmp.append(np.ones(tmp[0].shape))#  * meanimg)
+    
+    # make the montage
+    tmp2 = []
+    for i in range(0,len(tmp),maxw):
+        tmp2.append(np.hstack(tmp[i:i+maxw]))
+    montimg = np.vstack(tmp2) 
+    return montimg
+
 # def TP(y_true, y_pred):
 #     return K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
 # 

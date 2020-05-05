@@ -143,3 +143,5 @@ logs/
 *.out
 *.err
 *.log
+*.csv
+*.png

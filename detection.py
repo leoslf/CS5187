@@ -16,10 +16,11 @@ if __name__ == "__main__":
         # color = next(colors)
         print (color)
         img_with_bboxes = cv2.rectangle(img_with_bboxes, tuple(map(int, a)), tuple(map(int, b)), color, 2)
-        img_with_bboxes = cv2.circle(img_with_bboxes, tuple(map(int, c)), int(r), color, 2)
-        img_with_bboxes = cv2.circle(img_with_bboxes, tuple(map(int, c)), 1, color, -1)
+        # img_with_bboxes = cv2.circle(img_with_bboxes, tuple(map(int, c)), int(r), color, 2)
+        # img_with_bboxes = cv2.circle(img_with_bboxes, tuple(map(int, c)), 1, color, -1)
         img_with_bboxes = cv2.putText(img_with_bboxes, str(i), tuple(map(int, a)), cv2.FONT_HERSHEY_SIMPLEX, 1, color, thickness=2)
 
     cv2.imshow("img with bboxes", img_with_bboxes)
+    cv2.imwrite("train_1_unthresholded_bboxes.png", img_with_bboxes)
     cv2.waitKey(0)
 
